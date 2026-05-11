@@ -409,7 +409,7 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(title: const Text("Профиль")),
       body: const Center(
         child: Text(
-          "Это экран Профиля (Страница 4)\nПодключите код коллеги сюда",
+          "Это экран Профиля",
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 18),
         ),
