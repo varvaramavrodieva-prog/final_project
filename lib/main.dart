@@ -14,22 +14,21 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.green,
-        scaffoldBackgroundColor: const Color(0xFFF9F9F9), // Светлый фон как на макете
+        scaffoldBackgroundColor: const Color(0xFFF9F9F9),
         fontFamily: 'sans-serif',
       ),
-      // Здесь мы запускаем сразу экран корзины
+    
       home: const CartScreen(),
     );
   }
 }
 
-// Модель товара в корзине
 class CartItem {
   final String name;
   final String weight;
   final int price;
   int quantity;
-  final String imageUrl; // Ссылка на картинку
+  final String imageUrl; 
 
   CartItem({
     required this.name,
@@ -48,7 +47,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  // Список товаров (сюда вы добавите свои данные)
+ 
   List<CartItem> cartItems = [
     CartItem(
       name: "Помидоры розовые",
@@ -71,19 +70,18 @@ class _CartScreenState extends State<CartScreen> {
       quantity: 1,
       imageUrl: "https://images.unsplash.com/photo-1518977676601-b28f1a796396?auto=format&fit=crop&q=80&w=200",
     ),
-    // Добавьте еще товары здесь
+   
   ];
 
-  bool isDelivery = true; // true = Курьер, false = Самовывоз
+  bool isDelivery = true; 
 
-  // Функция для подсчета итоговой суммы
   int get totalPrice {
     int sum = 0;
     for (var item in cartItems) {
       sum += item.price * item.quantity;
     }
     if (isDelivery) {
-      sum += 150; // Стоимость доставки
+      sum += 150; 
     }
     return sum;
   }
@@ -102,7 +100,6 @@ class _CartScreenState extends State<CartScreen> {
     print("Навигация в профиль");
   }
 
-  // Навигация на другие экраны из нижней панели
   void _onBottomNavTap(int index) {
     if (index == 1) _goToCatalog();
     if (index == 3) _goToProfile();
@@ -110,9 +107,9 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Основная тема цветов (как на макете)
+   
     const Color primaryGreen = Color(0xFF2E7D4A);
-    const Color bgGreen = Color(0xFF4CAF50); // Для фона шапки профиля, если нужно
+    const Color bgGreen = Color(0xFF4CAF50);
     
     return Scaffold(
       appBar: AppBar(
@@ -120,7 +117,7 @@ class _CartScreenState extends State<CartScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: _goToCatalog, // Стрелка назад ведет на Стр 2
+          onPressed: _goToCatalog, 
         ),
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,7 +138,6 @@ class _CartScreenState extends State<CartScreen> {
       ),
       body: Column(
         children: [
-          // 1. Вертикально скроллящийся список товаров
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -152,8 +148,6 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
 
-          // 2. Блок доставки (не скроллится вместе с товарами, но может быть внутри, если нужно)
-          // В данном дизайне он фиксирован над кнопкой "Итого"
           Container(
             color: Colors.white,
             padding: const EdgeInsets.all(16),
@@ -176,7 +170,6 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 const SizedBox(height: 16),
                 
-                // Переключатель Курьер / Самовывоз
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
@@ -234,7 +227,6 @@ class _CartScreenState extends State<CartScreen> {
                 
                 const SizedBox(height: 8),
                 
-                // Цена доставки
                 Text(
                   isDelivery ? "150 ₽" : "Бесплатно",
                   textAlign: TextAlign.center,
@@ -243,7 +235,6 @@ class _CartScreenState extends State<CartScreen> {
 
                 const SizedBox(height: 12),
 
-                // ПОЛЕ КОММЕНТАРИЯ (Показывается только если курьер)
                 if (isDelivery)
                   Container(
                     height: 44,
@@ -266,7 +257,6 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
 
-          // 3. Подвал с итогом и кнопкой
           Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -300,7 +290,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     ),
                     onPressed: () {
-                      // Окно "Заказ успешно оформлен"
+                    
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
@@ -325,8 +315,8 @@ class _CartScreenState extends State<CartScreen> {
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                   ),
                                   onPressed: () {
-                                    Navigator.pop(context); // Закрыть диалог
-                                    _goToProfile(); // Переход на экран 4
+                                    Navigator.pop(context); 
+                                    _goToProfile(); 
                                   },
                                   child: const Text("Перейти в профиль", style: TextStyle(color: Colors.white)),
                                 ),
@@ -348,13 +338,12 @@ class _CartScreenState extends State<CartScreen> {
         ],
       ),
       
-      // 4. Нижняя панель навигации
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         selectedItemColor: primaryGreen,
         unselectedItemColor: Colors.grey,
-        currentIndex: 2, // Выделена вкладка "Корзина"
+        currentIndex: 2, 
         onTap: _onBottomNavTap,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.store_outlined), label: 'Рынки'),
@@ -366,13 +355,12 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  // Виджет одного товара в списке
   Widget _buildCartItem(CartItem item, Color primaryColor) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
-          // Картинка товара
+         
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.network(
@@ -381,14 +369,13 @@ class _CartScreenState extends State<CartScreen> {
               height: 80,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                // Если картинка не загрузится, покажем серый квадрат
+              
                 return Container(width: 80, height: 80, color: Colors.grey[300]);
               },
             ),
           ),
           const SizedBox(width: 12),
           
-          // Описание
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -411,7 +398,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
           
-          // Счетчик количества (+ / -)
+      
           Container(
             decoration: BoxDecoration(
               color: primaryColor,
