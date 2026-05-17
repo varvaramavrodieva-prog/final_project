@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
-// ─────────────────────────────────────────────
-// MODELS
-// ─────────────────────────────────────────────
+import 'dart:math';
 
 class Market {
   final String id;
@@ -48,10 +45,6 @@ class Product {
   double get totalPrice => price * quantity;
 }
 
-// ─────────────────────────────────────────────
-// CART STATE  (replaces CartService + Provider)
-// ─────────────────────────────────────────────
-
 class CartState {
   final Market? selectedMarket;
   final Map<String, Product> cartItems;
@@ -78,10 +71,6 @@ class CartState {
     );
   }
 }
-
-// ─────────────────────────────────────────────
-// INHERITED WIDGET  (makes state available tree-wide)
-// ─────────────────────────────────────────────
 
 class CartInherited extends InheritedWidget {
   final CartState state;
@@ -110,112 +99,6 @@ class CartInherited extends InheritedWidget {
   bool updateShouldNotify(CartInherited oldWidget) =>
       state != oldWidget.state;
 }
-
-// ─────────────────────────────────────────────
-// ROOT  (owns state and provides it via CartInherited)
-// ─────────────────────────────────────────────
-
-void main() => runApp(const MyApp());
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  CartState _cartState = const CartState(cartItems: {});
-
-  void _selectMarket(Market market) {
-    setState(() {
-      _cartState = CartState(selectedMarket: market, cartItems: const {});
-    });
-  }
-
-  void _addToCart(Product product) {
-    final items = Map<String, Product>.from(_cartState.cartItems);
-    if (items.containsKey(product.id)) {
-      final existing = items[product.id]!;
-      items[product.id] = Product(
-        id: existing.id,
-        name: existing.name,
-        category: existing.category,
-        price: existing.price,
-        unit: existing.unit,
-        imageUrl: existing.imageUrl,
-        quantity: existing.quantity + 1,
-      );
-    } else {
-      items[product.id] = Product(
-        id: product.id,
-        name: product.name,
-        category: product.category,
-        price: product.price,
-        unit: product.unit,
-        imageUrl: product.imageUrl,
-        quantity: 1,
-      );
-    }
-    setState(() {
-      _cartState = _cartState.copyWith(cartItems: items);
-    });
-  }
-
-  void _removeFromCart(String productId) {
-    final items = Map<String, Product>.from(_cartState.cartItems);
-    if (items.containsKey(productId)) {
-      if (items[productId]!.quantity > 1) {
-        final existing = items[productId]!;
-        items[productId] = Product(
-          id: existing.id,
-          name: existing.name,
-          category: existing.category,
-          price: existing.price,
-          unit: existing.unit,
-          imageUrl: existing.imageUrl,
-          quantity: existing.quantity - 1,
-        );
-      } else {
-        items.remove(productId);
-      }
-    }
-    setState(() {
-      _cartState = _cartState.copyWith(cartItems: items);
-    });
-  }
-
-  void _clearCart() {
-    setState(() {
-      _cartState = _cartState.copyWith(cartItems: const {});
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CartInherited(
-      state: _cartState,
-      selectMarket: _selectMarket,
-      addToCart: _addToCart,
-      removeFromCart: _removeFromCart,
-      clearCart: _clearCart,
-      child: MaterialApp(
-        title: 'Доставка с рынков',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.green,
-          fontFamily: 'Roboto',
-          scaffoldBackgroundColor: Colors.grey[50],
-        ),
-        home: const MarketSelectionScreen(),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────
-// WIDGET: CategoryChip
-// ─────────────────────────────────────────────
 
 class CategoryChip extends StatelessWidget {
   final String label;
@@ -252,8 +135,7 @@ class CategoryChip extends StatelessWidget {
               style: TextStyle(
                 color: isSelected ? Colors.white : Colors.grey[700],
                 fontSize: 12,
-                fontWeight:
-                    isSelected ? FontWeight.w600 : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
           ],
@@ -262,10 +144,6 @@ class CategoryChip extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────
-// WIDGET: MarketCard
-// ─────────────────────────────────────────────
 
 class MarketCard extends StatelessWidget {
   final Market market;
@@ -289,8 +167,7 @@ class MarketCard extends StatelessWidget {
           Stack(
             children: [
               ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                 child: Image.network(
                   market.imageUrl,
                   height: 180,
@@ -299,8 +176,7 @@ class MarketCard extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) => Container(
                     height: 180,
                     color: Colors.grey[300],
-                    child:
-                        const Icon(Icons.store, size: 64, color: Colors.grey),
+                    child: const Icon(Icons.store, size: 64, color: Colors.grey),
                   ),
                 ),
               ),
@@ -308,8 +184,7 @@ class MarketCard extends StatelessWidget {
                 top: 8,
                 right: 8,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
@@ -320,8 +195,7 @@ class MarketCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         market.rating.toStringAsFixed(1),
-                        style:
-                            const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -336,29 +210,24 @@ class MarketCard extends StatelessWidget {
               children: [
                 Text(
                   market.name,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.location_on,
-                        size: 16, color: Colors.grey[600]),
+                    Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
                     const SizedBox(width: 4),
                     Text(
                       '${market.distance.toStringAsFixed(1)} км',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     const SizedBox(width: 12),
-                    Icon(Icons.access_time,
-                        size: 16, color: Colors.grey[600]),
+                    Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
                     const SizedBox(width: 4),
                     Text(
                       'Открыт до ${market.closingTime}',
                       style: TextStyle(
-                        color: market.isOpen
-                            ? Colors.green[700]
-                            : Colors.red[700],
+                        color: market.isOpen ? Colors.green[700] : Colors.red[700],
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -373,13 +242,11 @@ class MarketCard extends StatelessWidget {
                       backgroundColor: Colors.green[700],
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     child: const Text(
                       'Выбрать',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -392,10 +259,7 @@ class MarketCard extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-// WIDGET: ProductCard
-// ─────────────────────────────────────────────
-
+// Карточка товара
 class ProductCard extends StatelessWidget {
   final Product product;
 
@@ -412,7 +276,7 @@ class ProductCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -424,8 +288,7 @@ class ProductCard extends StatelessWidget {
           Expanded(
             flex: 2,
             child: ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
               child: Image.network(
                 product.imageUrl,
                 width: double.infinity,
@@ -440,8 +303,7 @@ class ProductCard extends StatelessWidget {
                             ? loadingProgress.cumulativeBytesLoaded /
                                 loadingProgress.expectedTotalBytes!
                             : null,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.green[700]!),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.green[700]!),
                       ),
                     ),
                   );
@@ -451,12 +313,9 @@ class ProductCard extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.shopping_basket_outlined,
-                          size: 48, color: Colors.grey[400]),
+                      Icon(Icons.shopping_basket_outlined, size: 48, color: Colors.grey[400]),
                       const SizedBox(height: 8),
-                      Text('Нет фото',
-                          style: TextStyle(
-                              color: Colors.grey[500], fontSize: 12)),
+                      Text('Нет фото', style: TextStyle(color: Colors.grey[500], fontSize: 12)),
                     ],
                   ),
                 ),
@@ -476,16 +335,14 @@ class ProductCard extends StatelessWidget {
                     children: [
                       Text(
                         product.name,
-                        style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600),
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${product.price.toStringAsFixed(0)} ₽ / ${product.unit}',
-                        style: TextStyle(
-                            color: Colors.grey[600], fontSize: 12),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
                     ],
                   ),
@@ -495,44 +352,34 @@ class ProductCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: InkWell(
-                                onTap: () =>
-                                    cart.removeFromCart(product.id),
+                                onTap: () => cart.removeFromCart(product.id),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 6),
+                                  padding: const EdgeInsets.symmetric(vertical: 6),
                                   decoration: BoxDecoration(
                                     color: Colors.grey[200],
-                                    borderRadius:
-                                        BorderRadius.circular(6),
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
-                                  child: const Icon(Icons.remove,
-                                      size: 16, color: Colors.black87),
+                                  child: const Icon(Icons.remove, size: 16, color: Colors.black87),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
                               child: Text(
                                 '$quantity',
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                               ),
                             ),
                             Expanded(
                               child: InkWell(
                                 onTap: () => cart.addToCart(product),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 6),
+                                  padding: const EdgeInsets.symmetric(vertical: 6),
                                   decoration: BoxDecoration(
                                     color: Colors.green[700],
-                                    borderRadius:
-                                        BorderRadius.circular(6),
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
-                                  child: const Icon(Icons.add,
-                                      size: 16, color: Colors.white),
+                                  child: const Icon(Icons.add, size: 16, color: Colors.white),
                                 ),
                               ),
                             ),
@@ -547,11 +394,8 @@ class ProductCard extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green[700],
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(6)),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                             ),
                           ),
                         ),
@@ -565,10 +409,7 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-// SCREEN: MarketSelectionScreen
-// ─────────────────────────────────────────────
-
+// Экран выбора рынка
 class MarketSelectionScreen extends StatelessWidget {
   const MarketSelectionScreen({super.key});
 
@@ -580,8 +421,7 @@ class MarketSelectionScreen extends StatelessWidget {
       rating: 4.8,
       distance: 1.2,
       closingTime: '20:00',
-      imageUrl:
-          'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800',
+      imageUrl: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800',
       isOpen: true,
     ),
     Market(
@@ -591,8 +431,7 @@ class MarketSelectionScreen extends StatelessWidget {
       rating: 4.6,
       distance: 2.8,
       closingTime: '19:00',
-      imageUrl:
-          'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800',
+      imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800',
       isOpen: true,
     ),
     Market(
@@ -602,8 +441,7 @@ class MarketSelectionScreen extends StatelessWidget {
       rating: 4.7,
       distance: 3.5,
       closingTime: '21:00',
-      imageUrl:
-          'https://plus.unsplash.com/premium_photo-1686529896385-8a8d581d0225?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      imageUrl: 'https://plus.unsplash.com/premium_photo-1686529896385-8a8d581d0225?q=80&w=2070',
       isOpen: true,
     ),
     Market(
@@ -613,8 +451,7 @@ class MarketSelectionScreen extends StatelessWidget {
       rating: 4.5,
       distance: 4.1,
       closingTime: '20:00',
-      imageUrl:
-          'https://plus.unsplash.com/premium_photo-1663040589382-88caf6b2bc60?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      imageUrl: 'https://plus.unsplash.com/premium_photo-1663040589382-88caf6b2bc60?q=80&w=2070',
       isOpen: false,
     ),
   ];
@@ -641,10 +478,7 @@ class MarketSelectionScreen extends StatelessWidget {
           children: [
             const Text(
               'Санкт-Петербург',
-              style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600),
+              style: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w600),
             ),
             Text(
               'Выберите рынок',
@@ -654,8 +488,7 @@ class MarketSelectionScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_outlined,
-                color: Colors.black87),
+            icon: const Icon(Icons.notifications_outlined, color: Colors.black87),
             onPressed: () {},
           ),
         ],
@@ -663,8 +496,7 @@ class MarketSelectionScreen extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: const Text(
               'Свежие продукты с лучших рынков',
               style: TextStyle(fontSize: 16, color: Colors.black87),
@@ -679,11 +511,7 @@ class MarketSelectionScreen extends StatelessWidget {
                   market: _markets[index],
                   onSelect: () {
                     cart.selectMarket(_markets[index]);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CatalogScreen()),
-                    );
+                    Navigator.pushReplacementNamed(context, '/catalog');
                   },
                 );
               },
@@ -698,32 +526,24 @@ class MarketSelectionScreen extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.store), label: 'Рынки'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.category), label: 'Каталог'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart), label: 'Корзина'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: 'Профиль'),
+          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
+          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Каталог'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
         ],
         onTap: (index) {
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const CatalogScreen()),
-            );
-          } else if (index == 2) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text('Корзина будет у ваших коллег')),
-            );
-          } else if (index == 3) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text('Профиль будет у ваших коллег')),
-            );
+          switch (index) {
+            case 0:
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/catalog');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/cart');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/profile');
+              break;
           }
         },
       ),
@@ -731,10 +551,7 @@ class MarketSelectionScreen extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-// SCREEN: CatalogScreen
-// ─────────────────────────────────────────────
-
+// Экран каталога
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
 
@@ -755,86 +572,77 @@ class _CatalogScreenState extends State<CatalogScreen> {
   ];
 
   List<Product> get _allProducts => [
-        Product(
-          id: '1',
-          name: 'Помидоры розовые',
-          category: 'Овощи',
-          price: 120,
-          unit: 'кг',
-          imageUrl:
-              'https://images.unsplash.com/photo-1635843131003-d5cd578b0f85?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        ),
-        Product(
-          id: '2',
-          name: 'Огурцы среднеплодные',
-          category: 'Овощи',
-          price: 90,
-          unit: 'кг',
-          imageUrl:
-              'https://images.unsplash.com/photo-1566486189376-d5f21e25aae4?q=80&w=1467&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        ),
-        Product(
-          id: '3',
-          name: 'Перец красный',
-          category: 'Овощи',
-          price: 150,
-          unit: 'кг',
-          imageUrl:
-              'https://images.unsplash.com/photo-1608737637507-9aaeb9f4bf30?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        ),
-        Product(
-          id: '4',
-          name: 'Картофель молодой',
-          category: 'Овощи',
-          price: 60,
-          unit: 'кг',
-          imageUrl:
-              'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&h=300&fit=crop',
-        ),
-        Product(
-          id: '5',
-          name: 'Салат айсберг',
-          category: 'Овощи',
-          price: 80,
-          unit: 'шт',
-          imageUrl:
-              'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=300&fit=crop',
-        ),
-        Product(
-          id: '6',
-          name: 'Яблоки Голден',
-          category: 'Фрукты',
-          price: 110,
-          unit: 'кг',
-          imageUrl:
-              'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=300&fit=crop',
-        ),
-        Product(
-          id: '7',
-          name: 'Бананы',
-          category: 'Фрукты',
-          price: 95,
-          unit: 'кг',
-          imageUrl:
-              'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&h=300&fit=crop',
-        ),
-        Product(
-          id: '8',
-          name: 'Молоко 3.2%',
-          category: 'Молочные',
-          price: 75,
-          unit: 'л',
-          imageUrl:
-              'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=300&fit=crop',
-        ),
-      ];
+    Product(
+      id: '1',
+      name: 'Помидоры розовые',
+      category: 'Овощи',
+      price: 120,
+      unit: 'кг',
+      imageUrl: 'https://images.unsplash.com/photo-1635843131003-d5cd578b0f85?q=80&w=2070',
+    ),
+    Product(
+      id: '2',
+      name: 'Огурцы среднеплодные',
+      category: 'Овощи',
+      price: 90,
+      unit: 'кг',
+      imageUrl: 'https://images.unsplash.com/photo-1566486189376-d5f21e25aae4?q=80&w=1467',
+    ),
+    Product(
+      id: '3',
+      name: 'Перец красный',
+      category: 'Овощи',
+      price: 150,
+      unit: 'кг',
+      imageUrl: 'https://images.unsplash.com/photo-1608737637507-9aaeb9f4bf30?q=80&w=1035',
+    ),
+    Product(
+      id: '4',
+      name: 'Картофель молодой',
+      category: 'Овощи',
+      price: 60,
+      unit: 'кг',
+      imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&h=300&fit=crop',
+    ),
+    Product(
+      id: '5',
+      name: 'Салат айсберг',
+      category: 'Овощи',
+      price: 80,
+      unit: 'шт',
+      imageUrl: 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=300&fit=crop',
+    ),
+    Product(
+      id: '6',
+      name: 'Яблоки Голден',
+      category: 'Фрукты',
+      price: 110,
+      unit: 'кг',
+      imageUrl: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=300&fit=crop',
+    ),
+    Product(
+      id: '7',
+      name: 'Бананы',
+      category: 'Фрукты',
+      price: 95,
+      unit: 'кг',
+      imageUrl: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&h=300&fit=crop',
+    ),
+    Product(
+      id: '8',
+      name: 'Молоко 3.2%',
+      category: 'Молочные',
+      price: 75,
+      unit: 'л',
+      imageUrl: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=300&fit=crop',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final cart = CartInherited.of(context);
     final selectedMarket = cart.state.selectedMarket;
 
-    // No market selected
     if (selectedMarket == null) {
       return Scaffold(
         backgroundColor: Colors.grey[50],
@@ -843,8 +651,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
           elevation: 0,
           title: const Text(
             'Каталог',
-            style: TextStyle(
-                color: Colors.black87, fontWeight: FontWeight.w600),
+            style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
           ),
         ),
         body: Center(
@@ -862,22 +669,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const MarketSelectionScreen()),
-                  ),
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/markets'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[700],
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text('Выбрать рынок',
-                      style: TextStyle(fontSize: 16)),
+                  child: const Text('Выбрать рынок', style: TextStyle(fontSize: 16)),
                 ),
               ],
             ),
@@ -889,9 +688,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
     final filteredProducts = selectedCategory == 'Все'
         ? _allProducts
-        : _allProducts
-            .where((p) => p.category == selectedCategory)
-            .toList();
+        : _allProducts.where((p) => p.category == selectedCategory).toList();
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -900,21 +697,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const MarketSelectionScreen()),
-          ),
+          onPressed: () => Navigator.pushReplacementNamed(context, '/markets'),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               selectedMarket.name,
-              style: const TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600),
+              style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w600),
             ),
             Text(
               'Открыт до ${selectedMarket.closingTime}',
@@ -926,9 +716,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
           Stack(
             children: [
               IconButton(
-                icon:
-                    const Icon(Icons.shopping_cart, color: Colors.black87),
-                onPressed: () {},
+                icon: const Icon(Icons.shopping_cart, color: Colors.black87),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/cart');
+                },
               ),
               if (cart.state.totalItems > 0)
                 Positioned(
@@ -936,14 +727,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                   top: 8,
                   child: Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                        color: Colors.red, shape: BoxShape.circle),
+                    decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
                     child: Text(
                       '${cart.state.totalItems}',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -963,8 +750,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 return CategoryChip(
                   label: categories[index]['name']!,
                   icon: categories[index]['icon']!,
-                  isSelected:
-                      selectedCategory == categories[index]['name'],
+                  isSelected: selectedCategory == categories[index]['name'],
                   onTap: () {
                     setState(() {
                       selectedCategory = categories[index]['name']!;
@@ -982,8 +768,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 top: 8,
                 bottom: cart.state.totalItems > 0 ? 180 : 90,
               ),
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.68,
                 crossAxisSpacing: 8,
@@ -1002,13 +787,12 @@ class _CatalogScreenState extends State<CatalogScreen> {
         children: [
           if (cart.state.totalItems > 0)
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
+                    color: Colors.black.withOpacity(0.05),
                     blurRadius: 10,
                     offset: const Offset(0, -2),
                   ),
@@ -1024,33 +808,26 @@ class _CatalogScreenState extends State<CatalogScreen> {
                         children: [
                           Text(
                             '${cart.state.totalItems} товара',
-                            style: TextStyle(
-                                color: Colors.grey[600], fontSize: 12),
+                            style: TextStyle(color: Colors.grey[600], fontSize: 12),
                           ),
                           Text(
                             '${cart.state.totalPrice.toStringAsFixed(0)} ₽',
-                            style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87),
+                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
                           ),
                         ],
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/cart');
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green[700],
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
-                      child: const Text('К корзине',
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600)),
+                      child: const Text('К корзине', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),
@@ -1070,22 +847,24 @@ class _CatalogScreenState extends State<CatalogScreen> {
       type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
       items: const [
-        BottomNavigationBarItem(
-            icon: Icon(Icons.store), label: 'Рынки'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.category), label: 'Каталог'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart), label: 'Корзина'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.person), label: 'Профиль'),
+        BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
+        BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Каталог'),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
       ],
       onTap: (index) {
-        if (index == 0) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const MarketSelectionScreen()),
-          );
+        switch (index) {
+          case 0:
+            Navigator.pushReplacementNamed(context, '/markets');
+            break;
+          case 1:
+            break;
+          case 2:
+            Navigator.pushReplacementNamed(context, '/cart');
+            break;
+          case 3:
+            Navigator.pushReplacementNamed(context, '/profile');
+            break;
         }
       },
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'profile.dart'; 
-
+import 'menu_catalog.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,20 +10,102 @@ void main() {
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  CartState _cartState = const CartState(cartItems: {});
+  Market? _selectedMarket;
+
+  void _selectMarket(Market market) {
+    setState(() {
+      _selectedMarket = market;
+      _cartState = CartState(selectedMarket: market, cartItems: const {});
+    });
+  }
+
+  void _addToCart(Product product) {
+    final items = Map<String, Product>.from(_cartState.cartItems);
+    if (items.containsKey(product.id)) {
+      final existing = items[product.id]!;
+      items[product.id] = Product(
+        id: existing.id,
+        name: existing.name,
+        category: existing.category,
+        price: existing.price,
+        unit: existing.unit,
+        imageUrl: existing.imageUrl,
+        quantity: existing.quantity + 1,
+      );
+    } else {
+      items[product.id] = Product(
+        id: product.id,
+        name: product.name,
+        category: product.category,
+        price: product.price,
+        unit: product.unit,
+        imageUrl: product.imageUrl,
+        quantity: 1,
+      );
+    }
+    setState(() {
+      _cartState = _cartState.copyWith(cartItems: items);
+    });
+  }
+
+  void _removeFromCart(String productId) {
+    final items = Map<String, Product>.from(_cartState.cartItems);
+    if (items.containsKey(productId)) {
+      if (items[productId]!.quantity > 1) {
+        final existing = items[productId]!;
+        items[productId] = Product(
+          id: existing.id,
+          name: existing.name,
+          category: existing.category,
+          price: existing.price,
+          unit: existing.unit,
+          imageUrl: existing.imageUrl,
+          quantity: existing.quantity - 1,
+        );
+      } else {
+        items.remove(productId);
+      }
+    }
+    setState(() {
+      _cartState = _cartState.copyWith(cartItems: items);
+    });
+  }
+
+  void _clearCart() {
+    setState(() {
+      _cartState = _cartState.copyWith(cartItems: const {});
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Market App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.green),
-      initialRoute: '/cart',
-      routes: {
-        '/cart': (context) => const CartScreen(),
-        '/profile': (context) => const ProfileScreen(),
-      },
+    return CartInherited(
+      state: _cartState.copyWith(selectedMarket: _selectedMarket),
+      selectMarket: _selectMarket,
+      addToCart: _addToCart,
+      removeFromCart: _removeFromCart,
+      clearCart: _clearCart,
+      child: MaterialApp(
+        title: 'Market App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.green),
+        initialRoute: '/markets',
+        routes: {
+          '/markets': (context) => const MarketSelectionScreen(),
+          '/catalog': (context) => const CatalogScreen(),
+          '/cart': (context) => const CartScreen(),
+          '/profile': (context) => const ProfileScreen(),
+        },
+      ),
     );
   }
 }
@@ -38,27 +120,29 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   int _selectedIndex = 2;
 
-  List<CartItem> cartItems = [
-    CartItem(name: "Помидоры розовые", weight: "1 кг", price: 120, quantity: 1, imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVjFaoIDcUR5UKAkYF97K50AJtLQXJP86liQ&s"),
-    CartItem(name: "Огурцы среднеплодные", weight: "1 кг", price: 90, quantity: 2, imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIoRuZrbHdhw4qaEmzZk0OLmArZs95E_vcqg&s"),
-    CartItem(name: "Картофель молодой", weight: "1 кг", price: 60, quantity: 1, imageUrl: "https://cdn.tveda.ru/thumbs/bd7/bd7f72c2828b449f759223e8de37af04/fc23b658b6d1c4db8d53fdc193bfc063.jpg"),
-    CartItem(name: "Редис сладкий", weight: "1 шт", price: 89, quantity: 1, imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbp0VUCVXgY2R1EhPkliBeii-1D37r06_0nQ&s"),
-    CartItem(name: "Кабачок вкусный", weight: "1 кг", price: 112, quantity: 1, imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDYN2qU1eTx-9GY8kdaNH1I2u2S1R3yc_mEg&s"),
-    CartItem(name: "Листья салата", weight: "1 шт", price: 80, quantity: 1, imageUrl: "https://minio.clevermart.kz/food/images/2022/6/24/93127bda-cd88-4e03-80ff-74c7f476dcd4/M_2122750_1.png"),
-  ];
-
   bool isDelivery = true;
   TextEditingController streetController = TextEditingController();
   TextEditingController houseController = TextEditingController();
   TextEditingController aptController = TextEditingController();
 
+  List<CartItem> get cartItems {
+    final cart = CartInherited.of(context);
+    return cart.state.cartItems.values.map((product) {
+      return CartItem(
+        name: product.name,
+        weight: product.unit,
+        price: product.price.toInt(),
+        quantity: product.quantity,
+        imageUrl: product.imageUrl,
+      );
+    }).toList();
+  }
+
   bool get isCartEmpty => cartItems.isEmpty;
 
   int get totalPrice {
-    int sum = 0;
-    for (var item in cartItems) {
-      sum += item.price * item.quantity;
-    }
+    final cart = CartInherited.of(context);
+    int sum = cart.state.totalPrice.toInt();
     if (isDelivery) sum += 150;
     return sum;
   }
@@ -79,9 +163,8 @@ class _CartScreenState extends State<CartScreen> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
               onPressed: () {
-                setState(() {
-                  cartItems.clear();
-                });
+                final cart = CartInherited.of(context);
+                cart.clearCart();
                 Navigator.of(context).pop();
               },
               child: const Text("Подтвердить", style: TextStyle(color: Colors.white)),
@@ -122,10 +205,7 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ProfileScreen()),
-                      );
+                      Navigator.pushReplacementNamed(context, '/profile');
                     },
                     child: const Text(
                       "Перейти в профиль",
@@ -142,23 +222,24 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void _onBottomNavTap(int index) {
+    if (index == _selectedIndex) return;
+    
     setState(() {
       _selectedIndex = index;
     });
     
-    if (index == 3) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const ProfileScreen()),
-      );
-    } else if (index == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Раздел "Рынки" в разработке')),
-      );
-    } else if (index == 1) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Раздел "Каталог" в разработке')),
-      );
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/markets');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/catalog');
+        break;
+      case 2:
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/profile');
+        break;
     }
   }
 
@@ -174,7 +255,7 @@ class _CartScreenState extends State<CartScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, '/catalog');
           },
         ),
         title: const Column(
@@ -192,7 +273,6 @@ class _CartScreenState extends State<CartScreen> {
         ],
       ),
       body: isCartEmpty ? _buildEmptyCart(primaryGreen) : _buildActiveCart(primaryGreen),
-  
       bottomNavigationBar: _buildBottomNav(primaryGreen),
     );
   }
@@ -273,7 +353,9 @@ class _CartScreenState extends State<CartScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/catalog');
+            },
             child: const Text("Перейти в каталог", style: TextStyle(fontSize: 16, color: Colors.white)),
           ),
         ],
@@ -332,7 +414,7 @@ class _CartScreenState extends State<CartScreen> {
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 50, 
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
@@ -460,14 +542,14 @@ class _CartScreenState extends State<CartScreen> {
                 IconButton(
                   icon: const Icon(Icons.remove, color: Colors.white, size: 18),
                   onPressed: () {
-                    if (item.quantity > 1) setState(() => item.quantity--);
+                    
                   },
                 ),
                 Text("${item.quantity}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 IconButton(
                   icon: const Icon(Icons.add, color: Colors.white, size: 18),
                   onPressed: () {
-                    setState(() => item.quantity++);
+                  
                   },
                 ),
               ],
