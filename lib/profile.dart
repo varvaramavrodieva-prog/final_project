@@ -1,32 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
 
-void main() {
-  runApp(const Profile());
-}
-
-class Profile extends StatelessWidget {
-  const Profile({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Profile Screen',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF4CAF50),
-          brightness: Brightness.light,
-        ),
-        fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-      ),
-      home: const ProfileScreen(),
-    );
-  }
-}
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -49,6 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final List<Map<String, String>> _paymentMethods = [
     {'label': 'Visa', 'value': '•••• 1234'},
     {'label': 'Mastercard', 'value': '•••• 5678'},
+    {'label': 'Наличные', 'value': 'При получении'},
   ];
 
   final List<Map<String, String>> _favorites = [
@@ -58,7 +33,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryGreen = Color(0xFF4CAF50);
+    // ✅ Изменили на тот же цвет, что в корзине
+    const primaryGreen = Color(0xFF2E7D4A);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -177,11 +153,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   
                   const Divider(height: 1, thickness: 0.5),
-
+                  
+                  // 🔹 Способы оплаты
                   _buildExpandableSection(
                     icon: Icons.credit_card_outlined,
                     title: 'Способы оплаты',
-                    count: '2', 
+                    count: '3',
                     isExpanded: _showPaymentMethods,
                     onToggle: () => setState(() => _showPaymentMethods = !_showPaymentMethods),
                     items: _paymentMethods,
@@ -208,13 +185,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Заголовок истории заказов
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Text(
-                'История заказов',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'История заказов',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Смотреть все',
+                      style: TextStyle(
+                        color: primaryGreen,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 12),
@@ -382,7 +375,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              'https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_65e6f5d4e92a2c12d4f7449b_65e6fe1e412c431bd2a225ed/scale_2400',
+              'https://krasnyy-sulin.flowers-cvety.ru/sites/default/files/styles/414x414/public/bouquets/nabor_produktov_pervoy_neobhodimosti_v_upakovke.jpg?itok=FaQ4Qs7h',
               width: 55,
               height: 55,
               fit: BoxFit.cover,
@@ -422,7 +415,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   status,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.green,
+                    color: primaryColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -469,40 +462,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildNavItem(IconData icon, String label, int index, Color activeColor) {
-  final isSelected = _selectedIndex == index;
-  
-  return GestureDetector(
-    onTap: () {
-      setState(() => _selectedIndex = index);
-      
-      if (index == 2) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const CartScreen()),
-        );
-      } else if (index == 3) {
-      } else {
-      }
-    },
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          icon,
-          color: isSelected ? activeColor : Colors.grey,
-          size: 24,
-        ),
-        const SizedBox(height: 3),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
+    final isSelected = _selectedIndex == index;
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() => _selectedIndex = index);
+        
+        if (index == 2) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const CartScreen()),
+          );
+        }
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
             color: isSelected ? activeColor : Colors.grey,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            size: 24,
           ),
-        ),
-      ],
-    ),
-  );
-}
+          const SizedBox(height: 3),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: isSelected ? activeColor : Colors.grey,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
