@@ -33,7 +33,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Изменили на тот же цвет, что в корзине
     const primaryGreen = Color(0xFF2E7D4A);
 
     return Scaffold(
@@ -41,7 +40,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Верхняя зеленая панель профиля
             Container(
               width: double.infinity,
               padding: const EdgeInsets.only(top: 16, bottom: 24, left: 20, right: 20),
@@ -115,7 +113,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Блок "Мои данные"
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
@@ -154,7 +151,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   
                   const Divider(height: 1, thickness: 0.5),
                   
-                  // 🔹 Способы оплаты
                   _buildExpandableSection(
                     icon: Icons.credit_card_outlined,
                     title: 'Способы оплаты',
@@ -167,7 +163,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   
                   const Divider(height: 1, thickness: 0.5),
                   
-                  // Любимые продукты 
                   _buildExpandableSection(
                     icon: Icons.favorite_border,
                     title: 'Любимые продукты',
@@ -182,7 +177,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Заголовок истории заказов
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -212,7 +206,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 12),
 
-            // Список заказов
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -247,7 +240,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
-            // Нижняя навигация
             _buildBottomNav(primaryGreen),
           ],
         ),
@@ -315,7 +307,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         
-        // Выпадающий список элементов
         if (isExpanded) ...items.map((item) {
           return Container(
             margin: const EdgeInsets.only(bottom: 6),
