@@ -49,7 +49,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final List<Map<String, String>> _paymentMethods = [
     {'label': 'Visa', 'value': '•••• 1234'},
     {'label': 'Mastercard', 'value': '•••• 5678'},
-    {'label': 'Наличные', 'value': 'При получении'},
   ];
 
   final List<Map<String, String>> _favorites = [
@@ -178,12 +177,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   
                   const Divider(height: 1, thickness: 0.5),
-                  
-                  // 🔹 Способы оплаты
+
                   _buildExpandableSection(
                     icon: Icons.credit_card_outlined,
                     title: 'Способы оплаты',
-                    count: '3',
+                    count: '2', 
                     isExpanded: _showPaymentMethods,
                     onToggle: () => setState(() => _showPaymentMethods = !_showPaymentMethods),
                     items: _paymentMethods,
@@ -210,29 +208,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Заголовок истории заказов
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'История заказов',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Смотреть все',
-                      style: TextStyle(
-                        color: primaryGreen,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+              child: const Text(
+                'История заказов',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -400,7 +382,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              'https://krasnyy-sulin.flowers-cvety.ru/sites/default/files/styles/414x414/public/bouquets/nabor_produktov_pervoy_neobhodimosti_v_upakovke.jpg?itok=FaQ4Qs7h',
+              'https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_65e6f5d4e92a2c12d4f7449b_65e6fe1e412c431bd2a225ed/scale_2400',
               width: 55,
               height: 55,
               fit: BoxFit.cover,
@@ -440,7 +422,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   status,
                   style: TextStyle(
                     fontSize: 12,
-                    color: primaryColor,
+                    color: Colors.green,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
