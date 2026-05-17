@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'profile.dart'; 
+import 'market_selection_screen.dart';
+import 'catalog_screen';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -221,7 +224,7 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
-  
+
   Widget _buildNavItem(IconData icon, String label, int index, Color activeColor) {
     final isSelected = _selectedIndex == index;
     
