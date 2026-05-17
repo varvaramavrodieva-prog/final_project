@@ -526,11 +526,11 @@ class MarketSelectionScreen extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
         currentIndex: 0,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
-          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Каталог'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
-        ],
+        BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
+        BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Каталог'),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
+],
         onTap: (index) {
           switch (index) {
             case 0:
@@ -847,11 +847,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
       type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
-        BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Каталог'),
-        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
-      ],
+      BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
+      BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Каталог'),
+      BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
+      BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
+],
       onTap: (index) {
         switch (index) {
           case 0:
