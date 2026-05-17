@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'profile.dart';
+import 'profile.dart'; 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +35,7 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  int _selectedIndex = 2;
 
   List<CartItem> cartItems = [
     CartItem(name: "Помидоры розовые", weight: "1 кг", price: 120, quantity: 1, imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVjFaoIDcUR5UKAkYF97K50AJtLQXJP86liQ&s"),
@@ -139,6 +140,27 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  void _onBottomNavTap(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    
+    if (index == 3) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+      );
+    } else if (index == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Раздел "Рынки" в разработке')),
+      );
+    } else if (index == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Раздел "Каталог" в разработке')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const Color primaryGreen = Color(0xFF2E7D4A);
@@ -169,6 +191,61 @@ class _CartScreenState extends State<CartScreen> {
         ],
       ),
       body: isCartEmpty ? _buildEmptyCart(primaryGreen) : _buildActiveCart(primaryGreen),
+  
+      bottomNavigationBar: _buildBottomNav(primaryGreen),
+    );
+  }
+
+  Widget _buildBottomNav(Color activeColor) {
+    return Container(
+      padding: const EdgeInsets.only(top: 8, bottom: 18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildNavItem(Icons.home_outlined, 'Рынки', 0, activeColor),
+          _buildNavItem(Icons.dashboard_outlined, 'Каталог', 1, activeColor),
+          _buildNavItem(Icons.shopping_cart_outlined, 'Корзина', 2, activeColor),
+          _buildNavItem(Icons.person, 'Профиль', 3, activeColor),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildNavItem(IconData icon, String label, int index, Color activeColor) {
+    final isSelected = _selectedIndex == index;
+    
+    return GestureDetector(
+      onTap: () => _onBottomNavTap(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? activeColor : Colors.grey,
+            size: 24,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: isSelected ? activeColor : Colors.grey,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -400,7 +477,6 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 }
-
 
 class CartItem {
   final String name;
