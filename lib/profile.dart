@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const Profile());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Profile extends StatelessWidget {
+  const Profile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -486,28 +487,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildNavItem(IconData icon, String label, int index, Color activeColor) {
-    final isSelected = _selectedIndex == index;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedIndex = index),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
+  final isSelected = _selectedIndex == index;
+  
+  return GestureDetector(
+    onTap: () {
+      setState(() => _selectedIndex = index);
+      
+      if (index == 2) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CartScreen()),
+        );
+      } else if (index == 3) {
+      } else {
+      }
+    },
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          color: isSelected ? activeColor : Colors.grey,
+          size: 24,
+        ),
+        const SizedBox(height: 3),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
             color: isSelected ? activeColor : Colors.grey,
-            size: 24,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
           ),
-          const SizedBox(height: 3),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              color: isSelected ? activeColor : Colors.grey,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

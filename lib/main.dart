@@ -1,15 +1,18 @@
+import 'package:final_project/screens/catalog_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'profile.dart';
+import 'catalog_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
-    runApp(const MyApp());
+    runApp(const Cart());
   });
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Cart extends StatelessWidget {
+  const Cart({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -144,33 +147,46 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Корзина", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
-            Text("Даниловский рынок", style: TextStyle(fontSize: 12, color: Colors.grey)),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-            onPressed: isCartEmpty ? null : _clearCart,
-          ),
-        ],
-      ),
-      body: isCartEmpty ? _buildEmptyCart(primaryGreen) : _buildActiveCart(primaryGreen),
+  backgroundColor: Colors.white,
+  elevation: 0,
+  leading: IconButton(
+    icon: const Icon(Icons.arrow_back, color: Colors.black),
+    onPressed: () {
+      // Переход в каталог при нажатии на стрелку
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProductCatalogPage()),
+      );
+    },
+  ),
+  title: const Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("Корзина", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+      Text("Даниловский рынок", style: TextStyle(fontSize: 12, color: Colors.grey)),
+    ],
+  ),
+  actions: [
+    IconButton(
+      icon: const Icon(Icons.shopping_cart_outlined, color: Colors.black), // ← иконка корзины
+      onPressed: () {
+        // Переход в каталог при нажатии на корзину
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProductCatalogPage()),
+        );
+      },
+    ),
+    IconButton(
+      icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+      onPressed: isCartEmpty ? null : _clearCart,
+    ),
+  ],
+      )
     );
   }
 
-  Widget _buildEmptyCart(Color primaryColor) {
+  Widget buildEmptyCart(Color primaryColor) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -193,7 +209,12 @@ class _CartScreenState extends State<CartScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            onPressed: () {},
+            onPressed: () {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => const ProductCatalogPage()),
+  );
+},
             child: const Text("Перейти в каталог", style: TextStyle(fontSize: 16, color: Colors.white)),
           ),
         ],
@@ -394,24 +415,6 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Профиль")),
-      body: const Center(
-        child: Text(
-          "Это экран Профиля",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 18),
-        ),
       ),
     );
   }

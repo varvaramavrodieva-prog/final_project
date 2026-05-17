@@ -1,410 +1,412 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../models/product.dart';
-import '../models/market.dart';
-import '../services/cart_service.dart';
-import '../widgets/product_card.dart';
-import '../widgets/category_chip.dart';
-import 'market_selection_screen.dart';
+import 'package:final_project/main.dart'; // Импортируем CartScreen из main.dart
 
-class CatalogScreen extends StatefulWidget {
-  const CatalogScreen({super.key});
+// === Модель товара (можно вынести в отдельный файл) ===
+class CartItem {
+  final String name;
+  final String weight;
+  final double price;
+  int quantity;
+  final String imageUrl;
 
-  @override
-  State<CatalogScreen> createState() => _CatalogScreenState();
+  CartItem({
+    required this.name,
+    required this.weight,
+    required this.price,
+    required this.quantity,
+    required this.imageUrl,
+  });
+
+  double get totalPrice => price * quantity;
 }
 
-class _CatalogScreenState extends State<CatalogScreen> {
-  String selectedCategory = 'Все';
-  
-  final List<Map<String, String>> categories = [
-    {'name': 'Все', 'icon': '🛒'},
-    {'name': 'Овощи', 'icon': '🥬'},
-    {'name': 'Фрукты', 'icon': '🍎'},
-    {'name': 'Мясо', 'icon': '🥩'},
-    {'name': 'Молочные', 'icon': '🥛'},
-    {'name': 'Выпечка', 'icon': '🥐'},
+// === Страница каталога ===
+class ProductCatalogPage extends StatefulWidget {
+  const ProductCatalogPage({super.key});
+
+  @override
+  State<ProductCatalogPage> createState() => _ProductCatalogPageState();
+}
+
+class _ProductCatalogPageState extends State<ProductCatalogPage> {
+  // Список товаров
+  final List<CartItem> cartItems = [
+    CartItem(
+      name: "Помидоры розовые",
+      weight: "1 кг",
+      price: 120,
+      quantity: 1,
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVjFaoIDcUR5UKAkYF97K50AJtLQXJP86liQ&s",
+    ),
+    CartItem(
+      name: "Огурцы среднеплодные",
+      weight: "1 кг",
+      price: 90,
+      quantity: 2,
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIoRuZrbHdhw4qaEmzZk0OLmArZs95E_vcqg&s",
+    ),
+    CartItem(
+      name: "Картофель молодой",
+      weight: "1 кг",
+      price: 60,
+      quantity: 1,
+      imageUrl: "https://cdn.tveda.ru/thumbs/bd7/bd7f72c2828b449f759223e8de37af04/fc23b658b6d1c4db8d53fdc193bfc063.jpg",
+    ),
+    CartItem(
+      name: "Редис сладкий",
+      weight: "1 шт",
+      price: 89,
+      quantity: 1,
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbp0VUCVXgY2R1EhPkliBeii-1D37r06_0nQ&s",
+    ),
+    CartItem(
+      name: "Кабачок вкусный",
+      weight: "1 кг",
+      price: 112,
+      quantity: 1,
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDYN2qU1eTx-9GY8kdaNH1I2u2S1R3yc_mEg&s",
+    ),
+    CartItem(
+      name: "Листья салата",
+      weight: "1 шт",
+      price: 80,
+      quantity: 1,
+      imageUrl: "https://minio.clevermart.kz/food/images/2022/6/24/93127bda-cd88-4e03-80ff-74c7f476dcd4/M_2122750_1.png",
+    ),
   ];
 
-  List<Product> getProductsForMarket(Market market) {
-    return [
-      Product(
-        id: '1',
-        name: 'Помидоры розовые',
-        category: 'Овощи',
-        price: 120,
-        unit: 'кг',
-        imageUrl: 'https://images.unsplash.com/photo-1635843131003-d5cd578b0f85?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      ),
-      Product(
-        id: '2',
-        name: 'Огурцы среднеплодные',
-        category: 'Овощи',
-        price: 90,
-        unit: 'кг',
-        imageUrl: 'https://images.unsplash.com/photo-1566486189376-d5f21e25aae4?q=80&w=1467&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      ),
-      Product(
-        id: '3',
-        name: 'Перец красный',
-        category: 'Овощи',
-        price: 150,
-        unit: 'кг',
-        imageUrl: 'https://images.unsplash.com/photo-1608737637507-9aaeb9f4bf30?q=80&w=1035&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      ),
-      Product(
-        id: '4',
-        name: 'Картофель молодой',
-        category: 'Овощи',
-        price: 60,
-        unit: 'кг',
-        imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&h=300&fit=crop',
-      ),
-      Product(
-        id: '5',
-        name: 'Салат айсберг',
-        category: 'Овощи',
-        price: 80,
-        unit: 'шт',
-        imageUrl: 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=300&fit=crop',
-      ),
-      Product(
-        id: '6',
-        name: 'Яблоки Голден',
-        category: 'Фрукты',
-        price: 110,
-        unit: 'кг',
-        imageUrl: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=300&fit=crop',
-      ),
-      Product(
-        id: '7',
-        name: 'Бананы',
-        category: 'Фрукты',
-        price: 95,
-        unit: 'кг',
-        imageUrl: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&h=300&fit=crop',
-      ),
-      Product(
-        id: '8',
-        name: 'Молоко 3.2%',
-        category: 'Молочные',
-        price: 75,
-        unit: 'л',
-        imageUrl: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=300&fit=crop',
-      ),
-    ];
+  // Обновление количества товара
+  void _updateQuantity(int index, int newQuantity) {
+    if (newQuantity < 1) return;
+    setState(() {
+      cartItems[index].quantity = newQuantity;
+    });
+  }
+
+  // Подсчёт общей суммы
+  double get _totalAmount {
+    return cartItems.fold(0, (sum, item) => sum + item.totalPrice);
   }
 
   @override
   Widget build(BuildContext context) {
-    final cartService = context.watch<CartService>();
-    final selectedMarket = cartService.selectedMarket;
-    
-    // Если рынок не выбран - показываем предложение выбрать
-    if (selectedMarket == null) {
-      return Scaffold(
-        backgroundColor: Colors.grey[50],
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: const Text(
-            'Каталог',
-            style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
-          ),
-        ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.store_outlined,
-                  size: 80,
-                  color: Colors.grey[400],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Выберите рынок для просмотра товаров',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MarketSelectionScreen(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[700],
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text(
-                    'Выбрать рынок',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          selectedItemColor: Colors.green[700],
-          unselectedItemColor: Colors.grey,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: 1,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
-            BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Каталог'),
-            BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
-          ],
-          onTap: (index) {
-            if (index == 0) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const MarketSelectionScreen(),
-                ),
-              );
-            }
-          },
-        ),
-      );
-    }
-
-    final allProducts = getProductsForMarket(selectedMarket);
-    final filteredProducts = selectedCategory == 'Все'
-        ? allProducts
-        : allProducts.where((p) => p.category == selectedCategory).toList();
-
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF4CAF50),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MarketSelectionScreen(),
-            ),
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            // Переход в корзину при нажатии на стрелку
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CartScreen()),
+            );
+          },
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              selectedMarket.name,
-              style: const TextStyle(
-                color: Colors.black87,
+            const Text(
+              'Даниловский рынок',
+              style: TextStyle(
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
             Text(
-              'Открыт до ${selectedMarket.closingTime}',
+              'до 21:00',
               style: TextStyle(
-                color: Colors.green[700],
+                color: Colors.white.withOpacity(0.9),
                 fontSize: 12,
               ),
             ),
           ],
         ),
         actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart, color: Colors.black87),
-                onPressed: () {
-                  // Переход к корзине
-                },
-              ),
-              if (cartService.totalItems > 0)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      '${cartService.totalItems}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.white),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+            onPressed: () {
+              // Переход в корзину при нажатии на иконку
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const CartScreen()),
+              );
+            },
           ),
         ],
       ),
       body: Column(
         children: [
-          // Категории
-          Container(
-            height: 100,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              itemCount: categories.length,
+          // Сетка товаров
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(12),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.68,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: cartItems.length,
               itemBuilder: (context, index) {
-                return CategoryChip(
-                  label: categories[index]['name']!,
-                  icon: categories[index]['icon']!,
-                  isSelected: selectedCategory == categories[index]['name'],
-                  onTap: () {
-                    setState(() {
-                      selectedCategory = categories[index]['name']!;
-                    });
-                  },
-                );
+                return _buildProductCard(cartItems[index], index);
               },
             ),
           ),
           
-          // Список продуктов
+          // Итоговая панель
+          _buildBottomBar(),
+        ],
+      ),
+    );
+  }
+
+  // Карточка товара
+  Widget _buildProductCard(CartItem item, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Изображение товара
           Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.only(
-                left: 8,
-                right: 8,
-                top: 8,
-                bottom: cartService.totalItems > 0 ? 180 : 90,
+            flex: 5,
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                  child: Image.network(
+                    item.imageUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.image_not_supported, 
+                          color: Colors.grey, size: 40),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                // Метка веса
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      item.weight,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Информация о товаре
+          Expanded(
+            flex: 4,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Название
+                  Text(
+                    item.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      color: Colors.black87,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  
+                  // Цена и управление количеством
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${item.price} ₽',
+                        style: const TextStyle(
+                          color: Color(0xFF4CAF50),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      // Контроллер количества
+                      _buildQuantityControl(index, item.quantity),
+                    ],
+                  ),
+                ],
               ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.68,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: filteredProducts.length,
-              itemBuilder: (context, index) {
-                final product = filteredProducts[index];
-                return ProductCard(
-                  product: product,
-              
-                );
-              },
             ),
           ),
         ],
       ),
-      
-      // Единый bottomNavigationBar
-      bottomNavigationBar: Column(
+    );
+  }
+
+  // Контроллер количества (+/-)
+  Widget _buildQuantityControl(int index, int quantity) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFF4CAF50)),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Панель корзины
-          if (cartService.totalItems > 0)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, -2),
-                  ),
-                ],
+          // Кнопка минус
+          InkWell(
+            onTap: () => _updateQuantity(index, quantity - 1),
+            borderRadius: const BorderRadius.horizontal(
+              left: Radius.circular(6),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Icon(Icons.remove, size: 14, 
+                color: quantity <= 1 ? Colors.grey : const Color(0xFF4CAF50)),
+            ),
+          ),
+          
+          // Значение количества
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Text(
+              '$quantity',
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+                color: Colors.black87,
               ),
-              child: SafeArea(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${cartService.totalItems} товара',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12,
-                            ),
-                          ),
-                          Text(
-                            '${cartService.totalPrice.toStringAsFixed(0)} ₽',
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Переход к оформлению заказа
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green[700],
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const Text(
-                        'К корзине',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ],
+            ),
+          ),
+          
+          // Кнопка плюс
+          InkWell(
+            onTap: () => _updateQuantity(index, quantity + 1),
+            borderRadius: const BorderRadius.horizontal(
+              right: Radius.circular(6),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: const Icon(Icons.add, size: 14, color: Color(0xFF4CAF50)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Нижняя панель с итогом
+  Widget _buildBottomBar() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Итого',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+              Text(
+                '${_totalAmount.toStringAsFixed(0)} ₽',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Color(0xFF4CAF50),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: _totalAmount > 0 
+                ? () {
+                    // Переход в корзину для оформления заказа
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const CartScreen()),
+                    );
+                  }
+                : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4CAF50),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                disabledBackgroundColor: Colors.grey[300],
+              ),
+              child: const Text(
+                'Оформить заказ',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
                 ),
               ),
             ),
-          
-          // Нижняя навигация
-          BottomNavigationBar(
-            backgroundColor: Colors.white,
-            selectedItemColor: Colors.green[700],
-            unselectedItemColor: Colors.grey,
-            type: BottomNavigationBarType.fixed,
-            currentIndex: 1,
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
-              BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Каталог'),
-              BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
-              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
-            ],
-            onTap: (index) {
-              if (index == 0) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MarketSelectionScreen(),
-                  ),
-                );
-              }
-            },
           ),
         ],
       ),

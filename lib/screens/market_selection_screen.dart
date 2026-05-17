@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/market.dart';
 import '../services/cart_service.dart';
 import '../widgets/market_card.dart';
@@ -112,14 +111,14 @@ class MarketSelectionScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 return MarketCard(
                   market: markets[index],
-                  onSelect: () {
-                    context.read<CartService>().selectMarket(markets[index]);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CatalogScreen(),
-                      ),
-                    );
+                 onSelect: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CatalogScreen(selectedMarket: markets[index]),
+    ),
+  );
+},
                   },
                 );
               },
