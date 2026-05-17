@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'main.dart';
-import 'market_selection_screen.dart';
-import 'catalog_screen';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -368,7 +366,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              'https://krasnyy-sulin.flowers-cvety.ru/sites/default/files/styles/414x414/public/bouquets/nabor_produktov_pervoy_neobhodimosti_v_upakovke.jpg?itok=FaQ4Qs7h',
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVddMzZiZR0Kd6PYcQaH5N19Byz_5nD6tvkA&s',
               width: 55,
               height: 55,
               fit: BoxFit.cover,
