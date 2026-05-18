@@ -41,6 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            // Header с профилем
             Container(
               width: double.infinity,
               padding: const EdgeInsets.only(top: 16, bottom: 24, left: 20, right: 20),
@@ -114,6 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 20),
 
+            // Блок "Мои данные"
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
@@ -178,10 +180,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 20),
 
+            // Заголовок "История заказов" (без кнопки "Смотреть все")
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   const Text(
                     'История заказов',
@@ -191,22 +194,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Colors.black87,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Смотреть все',
-                      style: TextStyle(
-                        color: primaryGreen,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
             const SizedBox(height: 12),
 
+            // Список заказов
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -241,6 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
+            // Нижняя навигация
             _buildBottomNav(primaryGreen),
           ],
         ),
@@ -454,44 +448,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildNavItem(IconData icon, String label, int index, Color activeColor) {
-  final isSelected = _selectedIndex == index;
-  
-  return GestureDetector(
-    behavior: HitTestBehavior.translucent, 
-    onTap: () {
-      setState(() => _selectedIndex = index);
-      
-      if (index == 0) {
-        Navigator.pushReplacementNamed(context, '/markets');
-      } else if (index == 1) {
-        Navigator.pushReplacementNamed(context, '/catalog');
-      } else if (index == 2) {
-        Navigator.pushReplacementNamed(context, '/cart');
-      }
-    },
-    child: SizedBox(
-      width: 60,  
-      height: 56, 
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center, 
-        children: [
-          Icon(
-            icon,
-            color: isSelected ? activeColor : Colors.grey,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
+    final isSelected = _selectedIndex == index;
+    
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent, 
+      onTap: () {
+        setState(() => _selectedIndex = index);
+        
+        if (index == 0) {
+          Navigator.pushReplacementNamed(context, '/markets');
+        } else if (index == 1) {
+          Navigator.pushReplacementNamed(context, '/catalog');
+        } else if (index == 2) {
+          Navigator.pushReplacementNamed(context, '/cart');
+        }
+      },
+      child: SizedBox(
+        width: 60,  
+        height: 56, 
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, 
+          children: [
+            Icon(
+              icon,
               color: isSelected ? activeColor : Colors.grey,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              size: 24,
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                color: isSelected ? activeColor : Colors.grey,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
