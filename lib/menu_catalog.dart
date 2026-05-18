@@ -742,25 +742,22 @@ class _CatalogScreenState extends State<CatalogScreen> {
   children: [
     SizedBox(
   height: 120,
-  child: Center(
-    child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  child: SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    physics: const AlwaysScrollableScrollPhysics(),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+    child: Center(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: categories.map((cat) {
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(categories.length, (index) {
+          final cat = categories[index];
           return CategoryChip(
             label: cat['name']!,
             icon: cat['icon']!,
             isSelected: selectedCategory == cat['name'],
-            onTap: () {
-              setState(() {
-                selectedCategory = cat['name']!;
-              });
-            },
+            onTap: () => setState(() => selectedCategory = cat['name']!),
           );
-        }).toList(),
+        }),
       ),
     ),
   ),
