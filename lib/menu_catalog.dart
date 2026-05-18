@@ -421,7 +421,7 @@ class MarketSelectionScreen extends StatelessWidget {
       rating: 4.8,
       distance: 1.2,
       closingTime: '20:00',
-      imageUrl: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800',
+      imageUrl: 'https://avatars.mds.yandex.net/get-altay/1024093/2a000001622cbecc9e3daf4f8b8ce7e1b5be/L_height',
       isOpen: true,
     ),
     Market(
@@ -431,7 +431,7 @@ class MarketSelectionScreen extends StatelessWidget {
       rating: 4.6,
       distance: 2.8,
       closingTime: '19:00',
-      imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800',
+      imageUrl: 'https://avatars.mds.yandex.net/get-altay/5104421/2a0000018124e30dae7c50cd9616e99c58c6/L_height',
       isOpen: true,
     ),
     Market(
@@ -441,7 +441,7 @@ class MarketSelectionScreen extends StatelessWidget {
       rating: 4.7,
       distance: 3.5,
       closingTime: '21:00',
-      imageUrl: 'https://plus.unsplash.com/premium_photo-1686529896385-8a8d581d0225?q=80&w=2070',
+      imageUrl: 'https://n1s1.hsmedia.ru/83/81/17/8381175be6fa03a4949a74caceddb3d3/656x438_1_cd44f72b2824bc51454a288a7df777e7@1200x800_0xi9DaV6CO_4238568279405303054.jpg.webp',
       isOpen: true,
     ),
     Market(
@@ -451,7 +451,7 @@ class MarketSelectionScreen extends StatelessWidget {
       rating: 4.5,
       distance: 4.1,
       closingTime: '20:00',
-      imageUrl: 'https://plus.unsplash.com/premium_photo-1663040589382-88caf6b2bc60?q=80&w=2070',
+      imageUrl: 'https://avatars.mds.yandex.net/get-altay/4544819/2a000001775e0d7de7e486512f2eb480d716/L_height',
       isOpen: false,
     ),
   ];
@@ -578,7 +578,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       category: 'Овощи',
       price: 120,
       unit: 'кг',
-      imageUrl: 'https://images.unsplash.com/photo-1635843131003-d5cd578b0f85?q=80&w=2070',
+      imageUrl: 'https://tsx.x5static.net/i/800x800-fit/xdelivery/files/2a/e9/4d352df4528e4a07479e9bc4b5c9.jpg',
     ),
     Product(
       id: '2',
@@ -586,7 +586,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       category: 'Овощи',
       price: 90,
       unit: 'кг',
-      imageUrl: 'https://images.unsplash.com/photo-1566486189376-d5f21e25aae4?q=80&w=1467',
+      imageUrl: 'https://optim.tildacdn.com/tild3835-3734-4363-b833-373632373135/-/resize/422x/-/format/webp/DSC_0033_2.jpg.webp',
     ),
     Product(
       id: '3',
@@ -594,7 +594,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       category: 'Овощи',
       price: 150,
       unit: 'кг',
-      imageUrl: 'https://images.unsplash.com/photo-1608737637507-9aaeb9f4bf30?q=80&w=1035',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXNzDxKCp6Bjx89sstpdfujhLKA4Aysp2KNw&s',
     ),
     Product(
       id: '4',
@@ -602,7 +602,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       category: 'Овощи',
       price: 60,
       unit: 'кг',
-      imageUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&h=300&fit=crop',
+      imageUrl: 'https://cdn.tveda.ru/thumbs/bd7/bd7f72c2828b449f759223e8de37af04/fc23b658b6d1c4db8d53fdc193bfc063.jpg',
     ),
     Product(
       id: '5',
@@ -610,7 +610,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       category: 'Овощи',
       price: 80,
       unit: 'шт',
-      imageUrl: 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=300&fit=crop',
+      imageUrl: 'https://cdn.metro-cc.ru/ru/ru_pim_328140001001_02.png?maxwidth=460&maxheight=460&format=jpg&quality=90&width=460&height=460',
     ),
     Product(
       id: '6',
@@ -618,7 +618,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       category: 'Фрукты',
       price: 110,
       unit: 'кг',
-      imageUrl: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=300&fit=crop',
+      imageUrl: 'https://images.gastronom.ru/X4e84Hn4aW6Jyni1zw6QpHKxApl_zKlDM8GmkVBGe6I/pr:product-cover-image/g:ce/rs:auto:0:0:0/L2Ntcy9hbGwtaW1hZ2VzLzZjY2I1YWE5LTAyMzgtNGUwOC05ODUwLWFjYTEwN2YzYzRlMi5qcGc.webp',
     ),
     Product(
       id: '7',
@@ -626,7 +626,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       category: 'Фрукты',
       price: 95,
       unit: 'кг',
-      imageUrl: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&h=300&fit=crop',
+      imageUrl: 'https://static.tildacdn.com/tild6139-3936-4630-a332-363438656330/_1.jpg',
     ),
     Product(
       id: '8',
@@ -634,7 +634,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
       category: 'Молочные',
       price: 75,
       unit: 'л',
-      imageUrl: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=300&fit=crop',
+      imageUrl: 'https://s3.coolclever.tech/img/0000000034010024/960/4512.webp',
     ),
   ];
 
@@ -739,49 +739,54 @@ class _CatalogScreenState extends State<CatalogScreen> {
         ],
       ),
       body: Column(
-        children: [
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                return CategoryChip(
-                  label: categories[index]['name']!,
-                  icon: categories[index]['icon']!,
-                  isSelected: selectedCategory == categories[index]['name'],
-                  onTap: () {
-                    setState(() {
-                      selectedCategory = categories[index]['name']!;
-                    });
-                  },
-                );
-              },
-            ),
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.only(
-                left: 8,
-                right: 8,
-                top: 8,
-                bottom: cart.state.totalItems > 0 ? 180 : 90,
-              ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.68,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: filteredProducts.length,
-              itemBuilder: (context, index) {
-                return ProductCard(product: filteredProducts[index]);
-              },
-            ),
-          ),
-        ],
+  children: [
+    SizedBox(
+  height: 120,
+  child: Center(
+    child: SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: categories.map((cat) {
+          return CategoryChip(
+            label: cat['name']!,
+            icon: cat['icon']!,
+            isSelected: selectedCategory == cat['name'],
+            onTap: () {
+              setState(() {
+                selectedCategory = cat['name']!;
+              });
+            },
+          );
+        }).toList(),
       ),
+    ),
+  ),
+),
+          Expanded(
+      child: GridView.builder(
+        padding: EdgeInsets.only(
+          left: 8,
+          right: 8,
+          top: 8,
+          bottom: cart.state.totalItems > 0 ? 180 : 90,
+        ),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.68,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        itemCount: filteredProducts.length,
+        itemBuilder: (context, index) {
+          return ProductCard(product: filteredProducts[index]);
+        },
+      ),
+    ),
+  ],
+),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
