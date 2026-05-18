@@ -454,28 +454,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildNavItem(IconData icon, String label, int index, Color activeColor) {
-    final isSelected = _selectedIndex == index;
-    
-    return GestureDetector(
-      onTap: () {
-        setState(() => _selectedIndex = index);
-        
-        if (index == 2) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const CartScreen()),
-          );
-        }
-      },
+  final isSelected = _selectedIndex == index;
+  
+  return GestureDetector(
+    behavior: HitTestBehavior.translucent, 
+    onTap: () {
+      setState(() => _selectedIndex = index);
+      
+      if (index == 0) {
+        Navigator.pushReplacementNamed(context, '/markets');
+      } else if (index == 1) {
+        Navigator.pushReplacementNamed(context, '/catalog');
+      } else if (index == 2) {
+        Navigator.pushReplacementNamed(context, '/cart');
+      }
+    },
+    child: SizedBox(
+      width: 60,  
+      height: 56, 
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center, 
         children: [
           Icon(
             icon,
             color: isSelected ? activeColor : Colors.grey,
             size: 24,
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
@@ -486,6 +491,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+
 class Market {
   final String id;
   final String name;
@@ -96,9 +97,9 @@ class CartInherited extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(CartInherited oldWidget) =>
-      state != oldWidget.state;
+  bool updateShouldNotify(CartInherited oldWidget) => state != oldWidget.state;
 }
+
 
 class CategoryChip extends StatelessWidget {
   final String label;
@@ -259,7 +260,6 @@ class MarketCard extends StatelessWidget {
   }
 }
 
-// Карточка товара
 class ProductCard extends StatelessWidget {
   final Product product;
 
@@ -409,7 +409,23 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-// Экран выбора рынка
+int _getCurrentTabIndex(BuildContext context) {
+  final routeName = ModalRoute.of(context)?.settings.name;
+  switch (routeName) {
+    case '/markets':
+      return 0;
+    case '/catalog':
+      return 1;
+    case '/cart':
+      return 2;
+    case '/profile':
+      return 3;
+    default:
+      return 0;
+  }
+}
+
+
 class MarketSelectionScreen extends StatelessWidget {
   const MarketSelectionScreen({super.key});
 
@@ -459,6 +475,7 @@ class MarketSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = CartInherited.of(context);
+    final currentIndex = _getCurrentTabIndex(context); 
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -524,26 +541,20 @@ class MarketSelectionScreen extends StatelessWidget {
         selectedItemColor: Colors.green[700],
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
-        currentIndex: 0,
+        currentIndex: currentIndex, 
         items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
-        BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Каталог'),
-        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
-],
+          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Каталог'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
+        ],
         onTap: (index) {
-          switch (index) {
-            case 0:
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/catalog');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/cart');
-              break;
-            case 3:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
+          final routes = ['/markets', '/catalog', '/cart', '/profile'];
+          if (index < routes.length) {
+            final currentRoute = ModalRoute.of(context)?.settings.name;
+            if (routes[index] != currentRoute) {
+              Navigator.pushReplacementNamed(context, routes[index]);
+            }
           }
         },
       ),
@@ -551,7 +562,7 @@ class MarketSelectionScreen extends StatelessWidget {
   }
 }
 
-// Экран каталога
+
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
 
@@ -642,6 +653,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   Widget build(BuildContext context) {
     final cart = CartInherited.of(context);
     final selectedMarket = cart.state.selectedMarket;
+    final currentIndex = _getCurrentTabIndex(context); 
 
     if (selectedMarket == null) {
       return Scaffold(
@@ -682,7 +694,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: _buildBottomNav(0),
+        bottomNavigationBar: _buildBottomNav(currentIndex),
       );
     }
 
@@ -739,51 +751,51 @@ class _CatalogScreenState extends State<CatalogScreen> {
         ],
       ),
       body: Column(
-  children: [
-    SizedBox(
-  height: 120,
-  child: SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    physics: const AlwaysScrollableScrollPhysics(),
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-    child: Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(categories.length, (index) {
-          final cat = categories[index];
-          return CategoryChip(
-            label: cat['name']!,
-            icon: cat['icon']!,
-            isSelected: selectedCategory == cat['name'],
-            onTap: () => setState(() => selectedCategory = cat['name']!),
-          );
-        }),
-      ),
-    ),
-  ),
-),
+        children: [
+          SizedBox(
+            height: 120,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(categories.length, (index) {
+                    final cat = categories[index];
+                    return CategoryChip(
+                      label: cat['name']!,
+                      icon: cat['icon']!,
+                      isSelected: selectedCategory == cat['name'],
+                      onTap: () => setState(() => selectedCategory = cat['name']!),
+                    );
+                  }),
+                ),
+              ),
+            ),
+          ),
           Expanded(
-      child: GridView.builder(
-        padding: EdgeInsets.only(
-          left: 8,
-          right: 8,
-          top: 8,
-          bottom: cart.state.totalItems > 0 ? 180 : 90,
-        ),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.68,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-        ),
-        itemCount: filteredProducts.length,
-        itemBuilder: (context, index) {
-          return ProductCard(product: filteredProducts[index]);
-        },
+            child: GridView.builder(
+              padding: EdgeInsets.only(
+                left: 8,
+                right: 8,
+                top: 8,
+                bottom: cart.state.totalItems > 0 ? 180 : 90,
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.68,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: filteredProducts.length,
+              itemBuilder: (context, index) {
+                return ProductCard(product: filteredProducts[index]);
+              },
+            ),
+          ),
+        ],
       ),
-    ),
-  ],
-),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -814,7 +826,8 @@ class _CatalogScreenState extends State<CatalogScreen> {
                           ),
                           Text(
                             '${cart.state.totalPrice.toStringAsFixed(0)} ₽',
-                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+                            style: const TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
                           ),
                         ],
                       ),
@@ -829,13 +842,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
-                      child: const Text('К корзине', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                      child: const Text('К корзине',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),
               ),
             ),
-          _buildBottomNav(1),
+          _buildBottomNav(currentIndex), 
         ],
       ),
     );
@@ -849,24 +863,18 @@ class _CatalogScreenState extends State<CatalogScreen> {
       type: BottomNavigationBarType.fixed,
       currentIndex: currentIndex,
       items: const [
-      BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
-      BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Каталог'),
-      BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
-      BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
-],
+        BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Рынки'),
+        BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Каталог'),
+        BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Корзина'),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
+      ],
       onTap: (index) {
-        switch (index) {
-          case 0:
-            Navigator.pushReplacementNamed(context, '/markets');
-            break;
-          case 1:
-            break;
-          case 2:
-            Navigator.pushReplacementNamed(context, '/cart');
-            break;
-          case 3:
-            Navigator.pushReplacementNamed(context, '/profile');
-            break;
+        final routes = ['/markets', '/catalog', '/cart', '/profile'];
+        if (index < routes.length) {
+          final currentRoute = ModalRoute.of(context)?.settings.name;
+          if (routes[index] != currentRoute) {
+            Navigator.pushReplacementNamed(context, routes[index]);
+          }
         }
       },
     );

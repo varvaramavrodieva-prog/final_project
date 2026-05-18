@@ -125,20 +125,13 @@ class _CartScreenState extends State<CartScreen> {
   TextEditingController houseController = TextEditingController();
   TextEditingController aptController = TextEditingController();
 
-  List<CartItem> get cartItems {
+  // Теперь работаем напрямую с Product, чтобы сохранить доступ к id
+  List<Product> get cartProducts {
     final cart = CartInherited.of(context);
-    return cart.state.cartItems.values.map((product) {
-      return CartItem(
-        name: product.name,
-        weight: product.unit,
-        price: product.price.toInt(),
-        quantity: product.quantity,
-        imageUrl: product.imageUrl,
-      );
-    }).toList();
+    return cart.state.cartItems.values.toList();
   }
 
-  bool get isCartEmpty => cartItems.isEmpty;
+  bool get isCartEmpty => cartProducts.isEmpty;
 
   int get totalPrice {
     final cart = CartInherited.of(context);
@@ -369,9 +362,9 @@ class _CartScreenState extends State<CartScreen> {
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: cartItems.length,
+            itemCount: cartProducts.length,
             itemBuilder: (context, index) {
-              return _buildCartItem(cartItems[index], primaryColor);
+              return _buildCartItem(cartProducts[index], primaryColor);
             },
           ),
         ),
@@ -500,7 +493,9 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _buildCartItem(CartItem item, Color primaryColor) {
+  Widget _buildCartItem(Product product, Color primaryColor) {
+    final cart = CartInherited.of(context);
+    
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(8),
@@ -514,7 +509,7 @@ class _CartScreenState extends State<CartScreen> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
-              item.imageUrl,
+              product.imageUrl,
               width: 80,
               height: 80,
               fit: BoxFit.cover,
@@ -526,11 +521,11 @@ class _CartScreenState extends State<CartScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                Text(product.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text(item.weight, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                Text(product.unit, style: const TextStyle(fontSize: 13, color: Colors.grey)),
                 const SizedBox(height: 8),
-                Text("${item.price} ₽", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text("${product.price} ₽", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -541,16 +536,15 @@ class _CartScreenState extends State<CartScreen> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.remove, color: Colors.white, size: 18),
-                  onPressed: () {
-                    
-                  },
+                  onPressed: product.quantity > 1 
+                      ? () => cart.removeFromCart(product.id) 
+                      : null, 
                 ),
-                Text("${item.quantity}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                Text("${product.quantity}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              
                 IconButton(
                   icon: const Icon(Icons.add, color: Colors.white, size: 18),
-                  onPressed: () {
-                  
-                  },
+                  onPressed: () => cart.addToCart(product),
                 ),
               ],
             ),
@@ -559,20 +553,4 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
-}
-
-class CartItem {
-  final String name;
-  final String weight;
-  final int price;
-  int quantity;
-  final String imageUrl;
-
-  CartItem({
-    required this.name,
-    required this.weight,
-    required this.price,
-    required this.quantity,
-    required this.imageUrl,
-  });
 }
